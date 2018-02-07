@@ -1,0 +1,19 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+#map {
+  margin-top: 2em;
+	width: 100%;
+  height: 95vh;
+}
+.btn{
+  color: white;
+  background-color: #FACC2E;
+  padding: 0.70em 1em;
+}
+.btn{
+  margin-top: 2em;
+}
+
+
