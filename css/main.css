@@ -30,8 +30,6 @@ button, input, label{
   margin-top: 0.10em;
 }
 .controls {
-  position: relative;
-  left: 10em;
   border: 1px solid transparent;
   border-radius: 2px 0 0 2px;
   box-sizing: border-box;
@@ -45,17 +43,12 @@ button, input, label{
   font-family: Roboto;
   font-size: 15px;
   font-weight: 300;
-  margin-left: 20px;
   padding: 0 11px 0 13px;
   text-overflow: ellipsis;
   width: 200px;
 }
-#inputOrigin{
-  margin-left: 20em;
-}
-#inputDestination{
-  margin-left: 5em;
-}
+
+
 
 
 
