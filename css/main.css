@@ -2,18 +2,60 @@
   padding: 0;
   margin: 0;
 }
+body{
+  background-color: #E3CEF6;
+}
+.containerTitle{
+  background-color: #9F81F7;
+}
+.title{
+  margin-top: 0;
+  text-align: center;
+  color: white;
+}
 #map {
-  margin-top: 2em;
-	width: 100%;
-  height: 95vh;
+  margin-top: 1em;
+  margin-left: 2em;
+  margin-bottom: 2em;
+  border: 1px dotted black;
+  width: 95%;
+  height: 90vh;
 }
 .btn{
   color: white;
-  background-color: #FACC2E;
+  background-color: #9F81F7;
   padding: 0.70em 1em;
 }
-.btn{
-  margin-top: 2em;
+button, input, label{
+  margin-top: 0.10em;
 }
+.controls {
+  position: relative;
+  left: 10em;
+  border: 1px solid transparent;
+  border-radius: 2px 0 0 2px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  height: 32px;
+  outline: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+#inputOrigin, #inputDestination {
+  background-color: #fff;
+  font-family: Roboto;
+  font-size: 15px;
+  font-weight: 300;
+  margin-left: 20px;
+  padding: 0 11px 0 13px;
+  text-overflow: ellipsis;
+  width: 200px;
+}
+#inputOrigin{
+  margin-left: 20em;
+}
+#inputDestination{
+  margin-left: 5em;
+}
+
 
 

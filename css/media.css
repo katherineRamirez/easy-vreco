@@ -1,0 +1,42 @@
+/* Media query con ancho mínimo de 200px y máximo de 567px */
+@media (min-width: 200px) and (max-width: 900px) {
+	[class*="col-"] {
+		width: 100%;
+	}
+	.title{
+		text-align: center;
+	}	
+  .btnFindMe{
+    margin-top: 2em;
+    width: 30em;
+    margin-left: 3em;
+  }
+  .origin{
+    position: relative;
+    left: 3em;
+    bottom: 1.5em;
+  }
+  .destination{
+    position: relative;
+    left: 3em;
+    bottom: 2.5em;
+  }
+  .btn-route{
+    position: relative;
+    width: 30em;
+    left: 3em;
+    bottom: 3.5em;
+  }
+  #map{
+    width: 60%;
+    height: 30vh;
+    position: relative;
+    right: 1em;
+    left: 1em;
+    bottom: 2.8em;
+    zoom: 0.50;
+  }
+  #inputOrigin{
+    margin-right: 15em;
+  }
+}

@@ -1,103 +1,118 @@
-function initMap(){
-  var laboratoriaChile = {lat: -34.397, lng: 150.644};
-  var map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 17,
-    center: laboratoriaChile
+function initMap() {
+  var map = new google.maps.Map(document.getElementById("map"),{
+    zoom: 5,//zoom representa el nivel de profundidad de nuestro mapa, entre más zoom más localizado se verá.
+    center: {lat: -9.1191427, lng: -77.0349046},//center contiene la longitud y latitud en que queremos que se muestre nuestro mapa
+    mapTypeControl: false,
+    zoomControl: false,
+    streetViewControl: false
   });
-  var marker = new google.maps.Marker({
-    position: laboratoriaChile,
-    map: map
-  });
- var infoWindow = new google.maps.InfoWindow({map: map});
-  // Try HTML5 geolocation.
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var pos = {
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-      };
 
-      infoWindow.setPosition(pos);
-      infoWindow.setContent('Location found.');
-      map.setCenter(pos);
-    }, function() {
-      handleLocationError(true, infoWindow, map.getCenter());
-    });
-  } else {
-    // Browser doesn't support Geolocation
-    handleLocationError(false, infoWindow, map.getCenter());
+  function search(){
+    if(navigator.geolocation){
+      navigator.geolocation.getCurrentPosition(success, funcionError);//getCurrentPosition permite al usuario obtener su ubicación actual, uncionExito se ejecuta solo cuando el usuario comparte su ubicación, mientras que funcionError se ejecuta cuando se produce un error en la geolocalización
+    }
   }
 
-  var input = /** @type {!HTMLInputElement} */(
-            document.queryselector('inputOrigin'));
+  document.getElementById("findMe").addEventListener("click", search);
+  var latitud, longitud;
 
-        var types = document.getElementById('type-selector');
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(types);
+  var success = function(posicion){//var success, con el que obtendremos nuestra latitud o longitud y además crearemos un marcador de nuestra ubicación.
+    latitud = posicion.coords.latitude;
+    longitud = posicion.coords.longitude;
 
-        var autocomplete = new google.maps.places.Autocomplete(input);
-        autocomplete.bindTo('bounds', map);
+    var miUbicacion = new google.maps.Marker({
+      position: {lat:latitud, lng:longitud},
+      animation: google.maps.Animation.DROP,
+      map: map
+    });
 
-        var infowindow = new google.maps.InfoWindow();
-        var marker = new google.maps.Marker({
-          map: map,
-          anchorPoint: new google.maps.Point(0, -29)
+    map.setZoom(17);
+    map.setCenter({lat:latitud, lng:longitud});
+  }
+
+  var funcionError = function(error){//funcionError con un mensaje para el usuario, en caso de que nuestra geolocalización falle.
+    alert("tenemos un problema con encontrar tu ubicación");
+  }
+     new AutocompleteDirectionsHandler(map);
+      }
+       /**
+        * @constructor
+       */
+  function AutocompleteDirectionsHandler(map) {
+        this.map = map;
+        this.originPlaceId = null;
+        this.destinationPlaceId = null;
+        this.travelMode = 'WALKING';
+        var originInput = document.getElementById('inputOrigin');
+        var destinationInput = document.getElementById('inputDestination');
+        //var modeSelector = document.getElementById('mode-selector');
+        this.directionsService = new google.maps.DirectionsService;
+        this.directionsDisplay = new google.maps.DirectionsRenderer;
+        this.directionsDisplay.setMap(map);
+        var originAutocomplete = new google.maps.places.Autocomplete(
+            originInput, {placeIdOnly: true});
+        var destinationAutocomplete = new google.maps.places.Autocomplete(
+            destinationInput, {placeIdOnly: true});
+
+       this.setupClickListener('changemode-walking', 'WALKING');
+        this.setupClickListener('changemode-transit', 'TRANSIT');
+        this.setupClickListener('changemode-driving', 'DRIVING');
+
+        this.setupPlaceChangedListener(originAutocomplete, 'ORIG');
+        this.setupPlaceChangedListener(destinationAutocomplete, 'DEST');
+
+        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(originInput);
+        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(destinationInput);
+        this.map.controls[google.maps.ControlPosition.TOP_LEFT].push(modeSelector);
+      }
+
+      // Sets a listener on a radio button to change the filter type on Places
+      // Autocomplete.
+      AutocompleteDirectionsHandler.prototype.setupClickListener = function(id, mode) {
+        var radioButton = document.getElementById('id');
+        var me = this;
+        buttonRoute.addEventListener('click', function() {
+          me.travelMode = mode;
+          me.route();
         });
-
+      };
+      AutocompleteDirectionsHandler.prototype.setupPlaceChangedListener = function(autocomplete, mode) {
+        var me = this;
+        autocomplete.bindTo('bounds', this.map);
         autocomplete.addListener('place_changed', function() {
-          infowindow.close();
-          marker.setVisible(false);
           var place = autocomplete.getPlace();
-          if (!place.geometry) {
-            // User entered the name of a Place that was not suggested and
-            // pressed the Enter key, or the Place Details request failed.
-            window.alert("No details available for input: '" + place.name + "'");
+          if (!place.place_id) {
+            window.alert("Please select an option from the dropdown list.");
             return;
           }
-          // If the place has a geometry, then present it on a map.
-          if (place.geometry.viewport) {
-            map.fitBounds(place.geometry.viewport);
+          if (mode === 'ORIG') {
+            me.originPlaceId = place.place_id;
           } else {
-            map.setCenter(place.geometry.location);
-            map.setZoom(17);  // Why 17? Because it looks good.
+            me.destinationPlaceId = place.place_id;
           }
-          marker.setIcon(/** @type {google.maps.Icon} */({
-            url: place.icon,
-            size: new google.maps.Size(71, 71),
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(17, 34),
-            scaledSize: new google.maps.Size(35, 35)
-          }));
-          marker.setPosition(place.geometry.location);
-          marker.setVisible(true);
+          me.route();
+        });
 
-          var address = '';
-          if (place.address_components) {
-            address = [
-              (place.address_components[0] && place.address_components[0].short_name || ''),
-              (place.address_components[1] && place.address_components[1].short_name || ''),
-              (place.address_components[2] && place.address_components[2].short_name || '')
-            ].join(' ');
-          }
+      };
 
-          infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
-          infowindow.open(map, marker);
-});
-
-        // Sets a listener on a radio button to change the filter type on Places
-        // Autocomplete.
-        function setupClickListener(id, types) {
-          var radioButton = document.getElementById(id);
-          radioButton.addEventListener('click', function() {
-            autocomplete.setTypes(types);
-          });
+      AutocompleteDirectionsHandler.prototype.route = function() {
+        if (!this.originPlaceId || !this.destinationPlaceId) {
+          return;
         }
-}
+        var me = this;
+        this.directionsService.route({
+          origin: {'placeId': this.originPlaceId},
+          destination: {'placeId': this.destinationPlaceId},
+          travelMode: this.travelMode
+        }, function(response, status) {
+          if (status === 'OK') {
+            me.directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
-  infoWindow.setPosition(pos);
-  infoWindow.setContent(browserHasGeolocation ?
-                        'Error: The Geolocation service failed.' :
-'Error: Your browser doesn\'t support geolocation.');
-}
+      };
 
+
+    
