@@ -111,8 +111,8 @@ function initMap() {
       } else {
         window.alert('Petición de indicaciones fallidas debido a ' + status);
       }
+      
     });
-
   };
 
     
