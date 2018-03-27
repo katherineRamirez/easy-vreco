@@ -4,7 +4,6 @@ Es una aplicación de Geolocalización que te ayuda a encontrar tu ubicación y 
 
 ![demo](images/ruta.png)
 
-## Proyect desarrollado para 
+## Proyecto desarrollado en [Laboratoria](http://laboratoria.la) Chile
 
-[Laboratoria](http://www.laboratoria.la/) Chile
 
